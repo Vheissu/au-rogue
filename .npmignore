@@ -1,0 +1,41 @@
+# Source files - only ship compiled dist/
+src/
+tsconfig.json
+vitest.config.ts
+
+# Development files
+examples/
+.vscode/
+.git/
+.gitignore
+
+# Test files - exclude compiled test files too
+**/*.test.*
+**/*.spec.*
+dist/**/*.test.*
+dist/**/*.spec.*
+
+# Development dependencies
+node_modules/
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Build artifacts that shouldn't be published
+*.tsbuildinfo
+
+# Local reports (users will generate their own)
+au-rogue.report.*
+
+# Development tools
+.eslintrc.*
+.prettierrc.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+*.swp
+*.swo
+*~

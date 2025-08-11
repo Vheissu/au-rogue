@@ -1,0 +1,69 @@
+<template>
+  <div class="user-list">
+    <h2>Users</h2>
+    
+    <div class="search-box">
+      <input type="text" value.bind="searchTerm" placeholder="Search users...">
+      <button click.delegate="search()" class="btn btn-primary">Search</button>
+      <button click.delegate="clearSearch()" class="btn btn-secondary">Clear</button>
+    </div>
+
+    <div class="user-grid">
+      <div repeat.for="user of filteredUsers" class="user-item">
+        <user-card 
+          user.bind="user" 
+          editable.bind="canEdit"
+          edit-user.delegate="handleEditUser($event)">
+        </user-card>
+        
+        <div class="user-actions">
+          <!-- Event with potential preventDefault needs -->
+          <a href.bind="getUserUrl(user.id)" 
+             click.delegate="viewUser(user.id)" 
+             class="btn btn-link">
+            View Details
+          </a>
+          
+          <!-- Form submission that might need prevent -->
+          <form submit.delegate="quickUpdate(user)">
+            <input type="text" value.bind="user.quickNote">
+            <button type="submit">Quick Save</button>
+          </form>
+          
+          <!-- Button that should prevent default -->
+          <button click.delegate="deleteUser(user)" 
+                  class="btn btn-danger">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div if.bind="loading" class="loading-spinner">
+      Loading users...
+    </div>
+
+    <div if.bind="error" class="error-message">
+      Error loading users: \${error}
+    </div>
+
+    <!-- Pagination -->
+    <nav class="pagination">
+      <button click.delegate="previousPage()" 
+              disabled.bind="currentPage === 1"
+              class="btn">
+        Previous
+      </button>
+      
+      <span class="page-info">
+        Page \${currentPage} of \${totalPages}
+      </span>
+      
+      <button click.delegate="nextPage()" 
+              disabled.bind="currentPage === totalPages"
+              class="btn">
+        Next
+      </button>
+    </nav>
+  </div>
+</template>

@@ -1,0 +1,64 @@
+{
+  "name": "au-rogue",
+  "version": "0.1.0",
+  "type": "module",
+  "private": false,
+  "description": "Conservative Aurelia 1 to 2 codemods. Changes only what is safe, reports everything.",
+  "author": "Dwayne Charrington",
+  "license": "MIT",
+  "homepage": "https://github.com/Vheissu/au-rogue#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vheissu/au-rogue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Vheissu/au-rogue/issues"
+  },
+  "bin": {
+    "au-rogue": "dist/cli.js"
+  },
+  "main": "dist/cli.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "!dist/**/*.test.*",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "start": "node dist/cli.js --help",
+    "prepublishOnly": "pnpm run clean && pnpm run build && pnpm test",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui"
+  },
+  "keywords": [
+    "aurelia",
+    "aurelia2",
+    "codemod",
+    "migration",
+    "cli",
+    "typescript",
+    "ast",
+    "transform"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "fast-glob": "^3.3.2",
+    "parse5": "^7.1.2",
+    "ts-morph": "^22.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@vitest/ui": "^3.2.4",
+    "typescript": "^5.5.0",
+    "vitest": "^3.2.4"
+  },
+  "packageManager": "pnpm@8.12.1+sha256.28ca61ece5a496148b73fabc9afb820f9c3fec4f55f04ce45a2cea0a5219f2e1"
+}
