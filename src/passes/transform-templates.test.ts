@@ -119,7 +119,7 @@ describe('transformTemplates', () => {
     expect(reportData.entries.some(e => e.message === 'view-model.ref -> component.ref')).toBe(true);
   });
 
-  it('warns about .call bindings without transforming', () => {
+  it('converts .call bindings to .bind', () => {
     const html = `<template>
   <button click.call="handleClick()">Click me</button>
 </template>`;
@@ -129,12 +129,13 @@ describe('transformTemplates', () => {
 
     transformTemplates(['test.html'], reporter, { write: true });
 
-    // Should not write file since no edits were made (only warnings)
-    expect(mockFs.writeFileSync).not.toHaveBeenCalled();
+    expect(mockFs.writeFileSync).toHaveBeenCalled();
+    const written = mockFs.writeFileSync.mock.calls[0][1] as string;
+    expect(written).toContain('click.bind="($event) => handleClick()"');
     
     const reportData = reporter.finish();
-    expect(reportData.entries.some(e => 
-      e.kind === 'warn' && e.message.includes('Found *.call binding')
+    expect(reportData.entries.some(e =>
+      e.kind === 'edit' && e.message.includes('*.call -> *.bind')
     )).toBe(true);
   });
 
@@ -283,6 +284,38 @@ describe('transformTemplates', () => {
     const warnings = reportData.entries.filter(e => e.kind === 'warn');
     expect(warnings.some(w => w.message.includes('keydown.trigger') && w.message.includes(':prevent'))).toBe(true);
     expect(warnings.some(w => w.message.includes('keypress.trigger') && w.message.includes(':prevent'))).toBe(true);
+  });
+
+  it('converts .call bindings to .bind with lambda wrapper', () => {
+    const html = `<template>
+  <my-element action.call="doThing($event)"></my-element>
+</template>`;
+
+    mockFs.readFileSync.mockReturnValue(html);
+    mockFs.writeFileSync.mockImplementation(() => {});
+
+    transformTemplates(['test.html'], reporter, { write: true });
+
+    const written = mockFs.writeFileSync.mock.calls[0][1] as string;
+    expect(written).toContain('action.bind="($event) => doThing($event)"');
+
+    const reportData = reporter.finish();
+    const edits = reportData.entries.filter(e => e.kind === 'edit');
+    expect(edits.some(e => e.message.includes('*.call -> *.bind'))).toBe(true);
+  });
+
+  it('converts .call to .bind without wrapping existing arrow functions', () => {
+    const html = `<template>
+  <my-element action.call="($event) => doThing($event)"></my-element>
+</template>`;
+
+    mockFs.readFileSync.mockReturnValue(html);
+    mockFs.writeFileSync.mockImplementation(() => {});
+
+    transformTemplates(['test.html'], reporter, { write: true });
+
+    const written = mockFs.writeFileSync.mock.calls[0][1] as string;
+    expect(written).toContain('action.bind="($event) => doThing($event)"');
   });
 
   it('does not warn about non-problematic events', () => {

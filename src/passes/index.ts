@@ -1,5 +1,8 @@
 export { transformDI } from './transform-di.js';
 export { transformComputed } from './transform-computed.js';
+export { transformBindingEngine } from './transform-binding-engine.js';
+export { transformCustomElement } from './transform-custom-element.js';
+export { transformBindingSyntax } from './transform-binding-syntax.js';
 export { transformTemplates } from './transform-templates.js';
 export { transformPlatform, analyzePlatformUsage } from './transform-platform.js';
 export { transformLifecycle, suggestNewLifecycleHooks, detectLifecycleAntiPatterns } from './transform-lifecycle.js';

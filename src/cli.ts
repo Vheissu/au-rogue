@@ -6,7 +6,7 @@ import * as ts from 'typescript';
 import * as path from 'node:path';
 import { Reporter } from './types.js';
 import { writeReport } from './report.js';
-import { transformDI, transformComputed, transformTemplates, transformPlatform, analyzePlatformUsage, transformLifecycle, suggestNewLifecycleHooks, detectLifecycleAntiPatterns, transformBootstrap, suggestCompatPackage, transformRouter, generateRouterMigrationGuide } from './passes/index.js';
+import { transformBindingEngine, transformDI, transformComputed, transformCustomElement, transformBindingSyntax, transformTemplates, transformPlatform, analyzePlatformUsage, transformLifecycle, suggestNewLifecycleHooks, detectLifecycleAntiPatterns, transformBootstrap, suggestCompatPackage, transformRouter, generateRouterMigrationGuide } from './passes/index.js';
 
 const program = new Command();
 
@@ -41,8 +41,11 @@ const project = new Project({
 
 project.addSourceFilesAtPaths(sourcePaths);
 
+transformBindingEngine(project, reporter);
 transformDI(project, reporter);
 transformComputed(project, reporter);
+transformCustomElement(project, reporter);
+transformBindingSyntax(project, reporter);
 transformPlatform(project, reporter);
 transformLifecycle(project, reporter);
 transformBootstrap(project, reporter);

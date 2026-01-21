@@ -100,8 +100,16 @@ export function transformTemplates(files: string[], reporter: Reporter, options:
             reporter.edit(file, 'view-model.ref -> component.ref');
           }
           if (a.name.endsWith('.call')) {
-            warnings++;
-            reporter.warn(file, 'Found *.call binding. v2 removed .call. Convert to a lambda or method with .trigger as needed.');
+            const base = a.name.slice(0, -'.call'.length);
+            a.name = `${base}.bind`;
+            const value = a.value.trim();
+            if (value.includes('=>')) {
+              reporter.edit(file, '*.call -> *.bind (kept existing arrow function)');
+            } else {
+              a.value = `($event) => ${value}`;
+              reporter.edit(file, '*.call -> *.bind with lambda wrapper');
+            }
+            edits++;
           }
           
           // Check for event handlers that may need :prevent modifier in Aurelia 2
